@@ -45,6 +45,17 @@ double Vctr::getZ()
 
 }
 
+Vctr Vctr::add(Vctr toAdd)
+{
+
+	double sumX = this->x + toAdd.getX();
+	double sumY = this->y + toAdd.getY();
+	double sumZ = this->z + toAdd.getZ();
+
+	return Vctr(sumX, sumY, sumZ);
+
+}
+
 Vctr Vctr::cross(Vctr toCross)
 {
 
@@ -71,6 +82,17 @@ double Vctr::magnitude()
 {
 
 	return sqrt((x * x) + (y * y) + (z * z));
+
+}
+
+Vctr Vctr::multiply(double toMultiply)
+{
+
+	double scaledX = this->x * toMultiply;
+	double scaledY = this->y * toMultiply;
+	double scaledZ = this->z * toMultiply;
+
+	return Vctr(scaledX, scaledY, scaledZ);
 
 }
 

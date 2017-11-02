@@ -18,22 +18,10 @@
 #include <time.h>
 
 #include "Camera.h"
+#include "Color.h"
+#include "Light.h"
 #include "Ray.h"
 #include "Vctr.h"
-
-/**
-*	pixColor
-*
-*	Structure for storing the color values of a pixel.
-*/
-struct pixColor
-{
-
-	double red;
-	double green;
-	double blue;
-
-};
 
 /**
 *	saveImage
@@ -46,7 +34,7 @@ struct pixColor
 *	@param		height				The image height
 *	@param		values				The color values for all of the image's pixels
 */
-void saveImage(std::string fileName, int width, int height, pixColor *values)
+void saveImage(std::string fileName, int width, int height, Color *values)
 {
 
 	FILE *toSave;
@@ -59,10 +47,10 @@ void saveImage(std::string fileName, int width, int height, pixColor *values)
 	for (int i = 0; i < pixCount; ++i)
 	{
 
-		pixColor curColor = values[i];
+		Color curColor = values[i];
 
-		imageData << "\n" << (curColor.red * rgbSpace) << "\n" <<
-			(curColor.green * rgbSpace) << "\n" << (curColor.blue * rgbSpace);
+		imageData << "\n" << (curColor.getRed() * rgbSpace) << "\n" <<
+			(curColor.getGreen() * rgbSpace) << "\n" << (curColor.getBlue() * rgbSpace);
 
 	} //Output pixel colors as string values
 
@@ -74,41 +62,116 @@ void saveImage(std::string fileName, int width, int height, pixColor *values)
 
 }
 
+Color* processImage(Camera sceneCam, Light *sceneLights, Color background, int *dimensions)
+{
+
+	int pixCount = dimensions[0] * dimensions[1];
+	Color *pixels = new Color[pixCount];
+	int curPixel = 0;
+
+		for (int i = 0; i < dimensions[1]; ++i)	//width
+		{
+
+			for (int j = 0; j < dimensions[2]; ++j)	//height
+			{
+
+				curPixel = j * dimensions[1] + i; //set single dimension array position based on two dimensions
+
+				pixels[curPixel].setRed(background.getRed());
+				pixels[curPixel].setGreen(background.getGreen());
+				pixels[curPixel].setBlue(background.getBlue());
+
+			}
+
+		}
+
+		return pixels;
+
+}
+
+void outputProcessing(std::string sceneName)
+{
+
+	std::cout << "Processing " + sceneName + ". Please wait.\n";
+
+}
+
+void outputComplete(std::string fileName)
+{
+
+	std::cout << "Ray tracing complete. Image saved as " + fileName + ".\n";
+
+}
 
 int main(int argc, char*argv[])
 {
 
-	std::cout << "Render started...\n";
+	std::cout << "Ray tracing has started...\n";
 
-	int picDimen = 516; 	//square image
-	int pixCount = picDimen * picDimen;
-	pixColor *pixels = new pixColor[pixCount];
-	int curPixel = 0;
+	int *picDimen = new int[2]; 	//square image for each scene
+	picDimen[0] = 516;
+	picDimen[1] = 516;
 
 	//Identity Vectors
 	Vctr identX(1, 0, 0);
 	Vctr identY(0, 1, 0);
 	Vctr identZ(0, 0, 1);
 
+	//Set up Scene 1
 
+	outputProcessing("Scene 1");
 
-	for (int i = 0; i < picDimen; ++i)	//width
-	{
+	Vctr oneLookAt(0, 0, 0);
+	Vctr oneLookFrom(0, 0, 1);
+	Vctr oneDirection = oneLookFrom.add(oneLookAt.negate()).negate().normalize();
+	Vctr oneRight = identY.cross(oneDirection).normalize();
+	Vctr oneDown = oneRight.cross(oneDirection);
+	double oneFOV = 56;
+	Camera oneCam(oneLookFrom, oneDirection, oneRight, oneDown, oneFOV);
 
-		for (int j = 0; j < picDimen; ++j)	//height
-		{
+	Vctr oneLightPos(1, 0, 0);
+	Vctr oneLightColor(1, 1, 1);
+	Light oneDirectional(oneLightPos, oneLightColor);
 
-			curPixel = j * picDimen + i; //set single dimension array position based on two dimensions
+	Vctr oneAmbientColor(.2, .2, .2);
+	Light oneAmbient(Vctr(), oneAmbientColor);
 
-			pixels[curPixel].red = .182;
-			pixels[curPixel].green = .23;
-			pixels[curPixel].blue = .95;
+	Color oneBG(.2, .2, .2, 1.0);
 
-		}
+	Light *lights = new Light[2];
+	lights[0] = oneDirectional;
+	lights[1] = oneAmbient;
 
-	}
+	objColor *imageData = processImage(oneCam, lights, oneBG, picDimen);
+	std::string sceneOne = "scene1.ppm";
+	saveImage(sceneOne, picDimen[1], picDimen[0], imageData);
+	outputComplete(sceneOne);
 
-	saveImage("raytrace.ppm", picDimen, picDimen, pixels);
+	/*
+
+	//Set up Scene 2
+
+	outputProcessing("Scene 2");
+
+	std::string sceneTwo = "scene2.ppm";
+
+	saveImage(sceneOne, picDimen[1], picDimen[0], imageData);
+
+	outputComplete(sceneTwo);
+
+	//Set up Scene 3
+
+	outputProcessing("Scene 3");
+
+	std::string sceneThree = "scene3.ppm";
+
+	saveImage(sceneOne, picDimen[1], picDimen[0], imageData);
+
+	outputComplete(sceneThree);
+
+	*/
+
+	system("pause");
 
 	return 0;
 

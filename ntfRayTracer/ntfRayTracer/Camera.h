@@ -20,16 +20,18 @@ class Camera
 public:
 
 	Camera();
-	Camera(Vctr, Vctr, Vctr, Vctr);
+	Camera(Vctr, Vctr, Vctr, Vctr, double);
 
 	Vctr getPosition();
 	Vctr getDirection();
 	Vctr getRight();
 	Vctr getDown();
+	double getFOV();
 
 private:
 
 	Vctr position, direction, right, down;
+	double FOV;
 
 };
 
