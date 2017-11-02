@@ -17,6 +17,15 @@
 #include <stdio.h>
 #include <time.h>
 
+#include "Camera.h"
+#include "Ray.h"
+#include "Vctr.h"
+
+/**
+*	pixColor
+*
+*	Structure for storing the color values of a pixel.
+*/
 struct pixColor
 {
 
@@ -26,6 +35,17 @@ struct pixColor
 
 };
 
+/**
+*	saveImage
+*
+*	Takes in a user-specified file name, image width and height, as well as the
+*	color data for the image's pixels, in order to create a PPM image.
+*
+*	@param		fileName			The name of the file to create
+*	@param		width				The image width
+*	@param		height				The image height
+*	@param		values				The color values for all of the image's pixels
+*/
 void saveImage(std::string fileName, int width, int height, pixColor *values)
 {
 
@@ -64,6 +84,13 @@ int main(int argc, char*argv[])
 	int pixCount = picDimen * picDimen;
 	pixColor *pixels = new pixColor[pixCount];
 	int curPixel = 0;
+
+	//Identity Vectors
+	Vctr identX(1, 0, 0);
+	Vctr identY(0, 1, 0);
+	Vctr identZ(0, 0, 1);
+
+
 
 	for (int i = 0; i < picDimen; ++i)	//width
 	{
