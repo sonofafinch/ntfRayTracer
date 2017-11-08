@@ -22,19 +22,26 @@ public:
 	Color();
 	Color(double, double, double, double);
 
-	double getRed();
-	double getGreen();
-	double getBlue();
-	double getAlpha();
+	double getRed() const;
+	double getGreen() const;
+	double getBlue() const;
+	double getCharacter() const;
 
 	void setRed(double);
 	void setGreen(double);
 	void setBlue(double);
-	void setAlpha(double);
+	void setCharacter(double);
+
+	double value() const;
+	Color scaleHue(double scale) const;
+	Color addHue(Color toAdd) const;
+	Color multiplyHue(Color toMultiply) const;
+	Color average(Color toAvg) const;
+	Color limit() const;
 
 private:
 
-	double red, green, blue, alpha;
+	double red, green, blue, character;
 
 };
 

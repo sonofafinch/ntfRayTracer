@@ -28,35 +28,35 @@ Camera::Camera(Vctr position, Vctr direction, Vctr right, Vctr down, double FOV)
 
 }
 
-Vctr Camera::getPosition()
+Vctr Camera::getPosition() const
 {
 
 	return position;
 
 }
 
-Vctr Camera::getDirection()
+Vctr Camera::getDirection() const
 {
 
 	return direction;
 
 }
 
-Vctr Camera::getRight()
+Vctr Camera::getRight() const
 {
 
 
 	return right;
 }
 
-Vctr Camera::getDown()
+Vctr Camera::getDown() const
 {
 
 	return down;
 
 }
 
-double Camera::getFOV()
+double Camera::getFOV() const
 {
 
 	return FOV;

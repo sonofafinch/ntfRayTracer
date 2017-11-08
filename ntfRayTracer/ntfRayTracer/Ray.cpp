@@ -22,14 +22,14 @@ Ray::Ray(Vctr origin, Vctr direction)
 
 }
 
-Vctr Ray::getOrigin()
+Vctr Ray::getOrigin() const
 {
 
 	return origin;
 
 }
 
-Vctr Ray::getDirection()
+Vctr Ray::getDirection() const
 {
 
 	return direction;

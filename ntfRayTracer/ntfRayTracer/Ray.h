@@ -24,8 +24,8 @@ public:
 	Ray();
 	Ray(Vctr, Vctr);
 
-	Vctr getOrigin();
-	Vctr getDirection();
+	Vctr getOrigin() const;
+	Vctr getDirection() const;
 
 private:
 

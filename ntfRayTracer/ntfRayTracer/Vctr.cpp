@@ -24,86 +24,74 @@ Vctr::Vctr(double x, double y, double z)
 
 }
 
-double Vctr::getX()
+double Vctr::getX() const
 {
 
 	return x;
 
 }
 
-double Vctr::getY()
+double Vctr::getY() const
 {
 
 	return y;
 
 }
 
-double Vctr::getZ()
+double Vctr::getZ() const
 {
 
 	return z;
 
 }
 
-Vctr Vctr::add(Vctr toAdd)
+Vctr Vctr::add(Vctr toAdd) const
 {
 
-	double sumX = this->x + toAdd.getX();
-	double sumY = this->y + toAdd.getY();
-	double sumZ = this->z + toAdd.getZ();
-
-	return Vctr(sumX, sumY, sumZ);
+	return Vctr(x + toAdd.getX(), y + toAdd.getY(), z + toAdd.getZ());
 
 }
 
-Vctr Vctr::cross(Vctr toCross)
+Vctr Vctr::cross(Vctr toCross) const
 {
 
-	double crossX = this->y * toCross.getZ() - this->z * toCross.getY();
-	double crossY = this->z * toCross.getX() - this->x * toCross.getZ();
-	double crossZ = this->x * toCross.getY() - this->y * toCross.getX();
+	double xCross = y * toCross.getZ() - z * toCross.getY();
+	double yCross = z * toCross.getX() - x * toCross.getZ();
+	double zCross = x * toCross.getY() - y * toCross.getX();
 
-	return Vctr(crossX, crossY, crossZ);
+	return Vctr(xCross, yCross, zCross);
 
 }
 
-double Vctr::dot(Vctr toProduct)
+double Vctr::dot(Vctr toDot) const
 {
 
-	double xProduct = this->x * toProduct.getX();
-	double yProduct = this->y * toProduct.getY();
-	double zProduct = this->z * toProduct.getZ();
-
-	return xProduct + yProduct + zProduct;
+	return x * toDot.getX() + y * toDot.getY() + z * toDot.getZ();
 
 }
 
-double Vctr::magnitude()
+double Vctr::magnitude() const
 {
 
 	return sqrt((x * x) + (y * y) + (z * z));
 
 }
 
-Vctr Vctr::multiply(double toMultiply)
+Vctr Vctr::multiply(double toMultiply) const
 {
 
-	double scaledX = this->x * toMultiply;
-	double scaledY = this->y * toMultiply;
-	double scaledZ = this->z * toMultiply;
-
-	return Vctr(scaledX, scaledY, scaledZ);
+	return Vctr(x * toMultiply, y * toMultiply, z * toMultiply);
 
 }
 
-Vctr Vctr::negate()
+Vctr Vctr::negate() const
 {
 
 	return Vctr(-(this->x), -(this->y), -(this->z));
 
 }
 
-Vctr Vctr::normalize()
+Vctr Vctr::normalize() const
 {
 
 	double vctrMgntd = this->magnitude();

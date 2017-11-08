@@ -24,9 +24,9 @@ public:
 	Vctr();
 	Vctr(double, double, double);
 
-	double getX();
-	double getY();
-	double getZ();
+	double getX() const;
+	double getY() const;
+	double getZ() const;
 
 	/**
 	*	add
@@ -37,7 +37,7 @@ public:
 	*
 	*	@return							The sum of the two vectors
 	*/
-	Vctr add(Vctr toAdd);
+	Vctr add(Vctr toAdd) const;
 
 	/**
 	*	cross
@@ -48,7 +48,7 @@ public:
 	*
 	*	@return							The cross product of two vectors
 	*/
-	Vctr cross(Vctr toCross);
+	Vctr cross(Vctr toCross) const;
 
 	/**
 	*	dot
@@ -59,7 +59,7 @@ public:
 	*
 	*	@return							The dot product of the two vectors
 	*/
-	double dot(Vctr toProduct);
+	double dot(Vctr toDot) const;
 
 	/**
 	*	magnitude
@@ -68,15 +68,7 @@ public:
 	*
 	*	@preturn						The magnitude of this vector
 	*/
-	double magnitude();
-
-	/*
-	*	negate
-	*
-	*	Inverts this vector's x, y, and z values.
-	*
-	*	@return							The inverted vector
-	*/
+	double magnitude() const;
 
 	/**
 	*	multiply
@@ -87,9 +79,16 @@ public:
 	*
 	*	@return							The scaled vector
 	*/
-	Vctr multiply(double toMultiply);
+	Vctr multiply(double toMultiply) const;
 
-	Vctr negate();
+	/*
+	*	negate
+	*
+	*	Inverts this vector's x, y, and z values.
+	*
+	*	@return							The inverted vector
+	*/
+	Vctr negate() const;
 
 	/*
 	*	normalize
@@ -98,7 +97,7 @@ public:
 	*
 	*	@return							The normalized vector
 	*/
-	Vctr normalize();
+	Vctr normalize() const;
 
 private:
 

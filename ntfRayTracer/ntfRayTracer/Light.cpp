@@ -22,14 +22,14 @@ Light::Light(Vctr position, Color color)
 
 }
 
-Vctr Light::getPosition()
+Vctr Light::getPosition() const
 {
 
 	return position;
 
 }
 
-Color Light::getColor()
+Color Light::getColor() const
 {
 
 	return color;

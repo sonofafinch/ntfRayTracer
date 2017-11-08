@@ -22,11 +22,11 @@ public:
 	Camera();
 	Camera(Vctr, Vctr, Vctr, Vctr, double);
 
-	Vctr getPosition();
-	Vctr getDirection();
-	Vctr getRight();
-	Vctr getDown();
-	double getFOV();
+	Vctr getPosition() const;
+	Vctr getDirection() const;
+	Vctr getRight() const;
+	Vctr getDown()const;
+	double getFOV() const;
 
 private:
 

@@ -25,8 +25,8 @@ public:
 	Light();
 	Light(Vctr, Color);
 
-	Vctr getPosition();
-	Color getColor();
+	Vctr getPosition() const;
+	Color getColor() const;
 
 private:
 
