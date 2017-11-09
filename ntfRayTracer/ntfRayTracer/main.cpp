@@ -21,7 +21,6 @@
 #include "Color.h"
 #include "Light.h"
 #include "Ray.h"
-#include "Scene.h"
 #include "Shape.h"
 #include "Sphere.h"
 #include "Triangle.h"
@@ -328,6 +327,80 @@ void outputComplete(std::string fileName)
 
 }
 
+Color* processScene(int* picDimen, Vctr right, Vctr down, Camera sceneCam, std::vector<Shape*> sceneObjects, std::vector<Light> sceneLights, Color sceneBackground)
+{
+
+	int pixCount = picDimen[0] * picDimen[1];
+	Color *pixels = new Color[pixCount];
+	int curPixel = 0;
+
+	for (int i = 0; i < picDimen[0]; ++i)	//width
+	{
+
+		for (int j = 0; j < picDimen[1]; ++j)	//height
+		{
+
+			curPixel = j * picDimen[0] + i; //set single dimension array position based on two dimensions
+
+											//create ray
+
+			double xRay = (i + 0.5) / picDimen[0];
+			double yRay = ((picDimen[1] - j) + 0.5) / picDimen[1];
+
+			Vctr xComponent = right.multiply(xRay - 0.5);
+			Vctr yComponent = down.multiply(yRay - 0.5);
+
+			Vctr rayOrigin = sceneCam.getPosition();
+			Vctr rayDirection = sceneCam.getDirection().add(xComponent.add(yComponent)).normalize();
+
+			Ray fromCamera(rayOrigin, rayDirection);
+
+			//send rays out to scene
+
+			std::vector<double> intersections;
+
+			for (int k = 0; k < sceneObjects.size(); ++k)
+			{
+
+				intersections.push_back(sceneObjects.at(k)->detectIntersection(fromCamera));
+
+			}
+
+			int frontObject = findClosestObject(intersections);
+
+			if (frontObject == -1)
+			{
+
+				pixels[curPixel].setRed(sceneBackground.getRed());
+				pixels[curPixel].setGreen(sceneBackground.getGreen());
+				pixels[curPixel].setBlue(sceneBackground.getBlue());
+
+			}
+			else
+			{
+
+				if (intersections.at(frontObject) > MARGIN)
+				{
+
+					Vctr intersectionPosition = rayOrigin.add(rayDirection.multiply(intersections.at(frontObject)));
+
+					Color intersectedColor = getIntersectedColor(intersectionPosition, rayDirection, sceneObjects, frontObject, sceneLights);
+
+					pixels[curPixel].setRed(intersectedColor.getRed());
+					pixels[curPixel].setGreen(intersectedColor.getGreen());
+					pixels[curPixel].setBlue(intersectedColor.getBlue());
+
+				}
+			}
+
+		}
+
+	}
+
+	return pixels;
+
+}
+
 int main(int argc, char*argv[])
 {
 
@@ -364,89 +437,25 @@ int main(int argc, char*argv[])
 	Sphere sphereTwo(Vctr(.2, 0, -.1), .075, Color(1, 0, 0, 1), Color(.5, 1, .5, 32));
 	Sphere sphereThree(Vctr(-.6, 0, 0), .3, Color(0, 1, 0, 1), Color(.5, 1, .5, 32));
 
-	std::vector<Shape*> sceneObjects;
-	sceneObjects.push_back(dynamic_cast<Shape*>(&sphereOne));
-	sceneObjects.push_back(dynamic_cast<Shape*>(&sphereTwo));
-	sceneObjects.push_back(dynamic_cast<Shape*>(&sphereThree));
+	std::vector<Shape*> oneObj;
+	oneObj.push_back(dynamic_cast<Shape*>(&sphereOne));
+	oneObj.push_back(dynamic_cast<Shape*>(&sphereTwo));
+	oneObj.push_back(dynamic_cast<Shape*>(&sphereThree));
 
 	Triangle triangleOne(Vctr(.3, -.3, -.4), Vctr(0, .3, -.1), Vctr(-.3, -.3, .2), Color(0, 0, 1, 1), Color(1, 1, 1, 32));
 	Triangle triangleTwo(Vctr(-.2, .1, .1), Vctr(-.2, -.5, .2), Vctr(-.2, .1, -.3), Color(1, 1, 0, 1), Color(1, 1, 1, 4));
 
-	sceneObjects.push_back(dynamic_cast<Shape*>(&triangleOne));
-	sceneObjects.push_back(dynamic_cast<Shape*>(&triangleTwo));
+	oneObj.push_back(dynamic_cast<Shape*>(&triangleOne));
+	oneObj.push_back(dynamic_cast<Shape*>(&triangleTwo));
 
-	int pixCount = picDimen[0] * picDimen[1];
-	Color *pixels = new Color[pixCount];
-	int curPixel = 0;
-
-	for (int i = 0; i < picDimen[0]; ++i)	//width
-	{
-
-		for (int j = 0; j < picDimen[1]; ++j)	//height
-		{
-
-			curPixel = j * picDimen[0] + i; //set single dimension array position based on two dimensions
-
-			//create ray
-
-			double xRay = (i + 0.5) / picDimen[0];
-			double yRay = ((picDimen[1] - j) + 0.5) / picDimen[1];
-
-			Vctr xComponent = oneRight.multiply(xRay - 0.5);
-			Vctr yComponent = oneDown.multiply(yRay - 0.5);
-
-			Vctr rayOrigin = oneCam.getPosition();
-			Vctr rayDirection = oneCam.getDirection().add(xComponent.add(yComponent)).normalize();
-
-			Ray fromCamera(rayOrigin, rayDirection);
-
-			//send rays out to scene
-
-			std::vector<double> intersections;
-
-			for (int k = 0; k < sceneObjects.size(); ++k)
-			{
-
-				intersections.push_back(sceneObjects.at(k)->detectIntersection(fromCamera));
-
-			}
-
-			int frontObject = findClosestObject(intersections);
-
-			if (frontObject == -1)
-			{
-
-				pixels[curPixel].setRed(oneBG.getRed());
-				pixels[curPixel].setGreen(oneBG.getGreen());
-				pixels[curPixel].setBlue(oneBG.getBlue());
-
-			}
-			else
-			{
-
-				if (intersections.at(frontObject) > MARGIN)
-				{
-
-					Vctr intersectionPosition = rayOrigin.add(rayDirection.multiply(intersections.at(frontObject)));
-
-					Color intersectedColor = getIntersectedColor(intersectionPosition, rayDirection, sceneObjects, frontObject, oneLights);
-
-					pixels[curPixel].setRed(intersectedColor.getRed());
-					pixels[curPixel].setGreen(intersectedColor.getGreen());
-					pixels[curPixel].setBlue(intersectedColor.getBlue());
-
-				}
-			}
-
-		}
-
-	}
+	Color* sceneOneImage = processScene(picDimen, oneRight, oneDown, oneCam, oneObj, oneLights, oneBG);
 
 	std::string sceneOneFile = "scene1.ppm";
-	saveImage(sceneOneFile, picDimen[1], picDimen[0], pixels);
-	outputComplete(sceneOneFile);
+	saveImage(sceneOneFile, picDimen[1], picDimen[0], sceneOneImage);
 
-	/*
+	delete sceneOneImage;
+
+	outputComplete(sceneOneFile);
 
 	//Set up Scene 2
 
@@ -454,7 +463,40 @@ int main(int argc, char*argv[])
 
 	std::string sceneTwo = "scene2.ppm";
 
-	saveImage(sceneOne, picDimen[1], picDimen[0], imageData);
+	const Vctr twoLookAt(0, 0, 0);
+	const Vctr twoLookFrom(0, 0, 1.2);
+	const Vctr twoDirection = twoLookFrom.negate();
+	const Vctr twoRight = IDENT_Y.cross(twoDirection).negate();
+	const Vctr twoDown = twoRight.cross(twoDirection);
+	const double twoFOV = 55;
+	const Camera twoCam(twoLookFrom, twoDirection, twoRight, twoDown, twoFOV);
+
+	const Vctr twoLightPos(IDENT_Y.getX(), IDENT_Y.getY(), IDENT_Y.getZ());
+	const Color twoLightColor(1.0, 1.0, 1.0, 1.0);
+	const Light twoDirectional(twoLightPos, twoLightColor);
+
+	const Color twoAmbientColor(0.0, 0.0, 0.0, 0.0);
+	const Light twoAmbient(Vctr(), twoAmbientColor);
+
+	const Color twoBG(.2, .2, .2, 1);
+
+	const std::vector<Light> twoLights = { twoAmbient, twoDirectional };
+
+	Sphere sphere1(Vctr(0, 0.3, 0), .2, Color(0, 0, 0, 1), Color(.75, .75, .75, .75));
+
+	std::vector<Shape*> twoObj;
+	twoObj.push_back(dynamic_cast<Shape*>(&sphere1));
+
+	Triangle triangle1(Vctr(0, -.5, .5), Vctr(1, .5, 0), Vctr(0, -.5, -.5), Color(0, 0, 1, 1), Color(1, 1, 1, 4));
+	Triangle triangle2(Vctr(0, -.5, .5), Vctr(0, -.5, -.5), Vctr(-1, .5, 0), Color(1, 1, 0, 1), Color(1, 1, 1, 4));
+
+	twoObj.push_back(dynamic_cast<Shape*>(&triangle1));
+	twoObj.push_back(dynamic_cast<Shape*>(&triangle2));
+
+	Color* sceneTwoImage = processScene(picDimen, twoRight, twoDown, twoCam, twoObj, twoLights, twoBG);
+
+	std::string sceneTwoFile = "scene2.ppm";
+	saveImage(sceneTwoFile, picDimen[1], picDimen[0], sceneTwoImage);
 
 	outputComplete(sceneTwo);
 
@@ -464,11 +506,48 @@ int main(int argc, char*argv[])
 
 	std::string sceneThree = "scene3.ppm";
 
-	saveImage(sceneOne, picDimen[1], picDimen[0], imageData);
+	const Vctr threeLookAt(0, 0, 0);
+	const Vctr threeLookFrom(1, 1, 1);
+	const Vctr threeDirection = threeLookFrom.negate();
+	const Vctr threeRight = IDENT_Y.cross(threeDirection).negate();
+	const Vctr threeDown = threeRight.cross(threeDirection);
+	const double threeFOV = 45;
+	const Camera threeCam(threeLookFrom, threeDirection, threeRight, threeDown, threeFOV);
+
+	const Vctr threeLightPos(0, -1, 1);
+	const Color threeLightColor(1.0, 1.0, 1.0, 0);
+	const Light threeDirectional(threeLightPos, threeLightColor);
+
+	const Color threeAmbientColor(.1, .1, .1, 0);
+	const Light threeAmbient(Vctr(), threeAmbientColor);
+
+	const Color threeBG(.2, .2, .2, 0);
+
+	const std::vector<Light> threeLights = { threeAmbient, threeDirectional };
+
+	Sphere sphereA(Vctr(.5, -.5, -2), .1, Color(1, 1, 1, 1), Color(.2, 1, .3, 4));
+	Sphere sphereB(Vctr(.2, 0, -.5), .2, Color(1, 0, 0, 1), Color(.1, 1, .5, 32));
+	Sphere sphereC(Vctr(-.5, 0, -4), .2, Color(1, 0, .3, 1), Color(.1, 1, .5, 32));
+	
+	std::vector<Shape*> threeObj;
+	threeObj.push_back(dynamic_cast<Shape*>(&sphereA));
+	threeObj.push_back(dynamic_cast<Shape*>(&sphereB));
+	threeObj.push_back(dynamic_cast<Shape*>(&sphereC));
+
+	Triangle triangleA(Vctr(-.3, -.3, -.4), Vctr(0, .3, -.1), Vctr(-.3, -.3, .2), Color(.5, 0, 1, 1), Color(1, 1, 1, 4));
+	Triangle triangleB(Vctr(-.2, .1, .1), Vctr(.2, -.5, .2), Vctr(-.2, .1, -.3), Color(1, .5, 0, 1), Color(1, 1, 1, 32));
+
+	threeObj.push_back(dynamic_cast<Shape*>(&triangleA));
+	threeObj.push_back(dynamic_cast<Shape*>(&triangleB));
+
+	Color* sceneThreeImage = processScene(picDimen, threeRight, threeDown, threeCam, threeObj, threeLights, threeBG);
+
+	std::string sceneThreeFile = "scene3.ppm";
+	saveImage(sceneThreeFile, picDimen[1], picDimen[0], sceneThreeImage);
+
+	saveImage(sceneThree, picDimen[1], picDimen[0], sceneThreeImage);
 
 	outputComplete(sceneThree);
-
-	*/
 
 	system("pause");
 

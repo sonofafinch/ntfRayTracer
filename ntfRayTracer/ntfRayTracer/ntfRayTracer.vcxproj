@@ -116,7 +116,6 @@
     <ClCompile Include="Light.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Ray.cpp" />
-    <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Sphere.cpp" />
     <ClCompile Include="Triangle.cpp" />
     <ClCompile Include="Vctr.cpp" />
@@ -126,7 +125,6 @@
     <ClInclude Include="Color.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="Ray.h" />
-    <ClInclude Include="Scene.h" />
     <ClInclude Include="Shape.h" />
     <ClInclude Include="Sphere.h" />
     <ClInclude Include="Triangle.h" />
