@@ -24,11 +24,12 @@ class Sphere : public Shape
 public:
 
 	Sphere();
-	Sphere(Vctr, double, Color);
+	Sphere(Vctr, double, Color, Color);
 
 	Vctr getPosition() const;
 	double getRadius() const;
 	virtual Color getColor() const;
+	virtual Color getPhong() const;
 
 	virtual Vctr getNormal(Vctr) const;
 	virtual double detectIntersection(Ray curRay) const;
@@ -38,6 +39,7 @@ private:
 	Vctr center;
 	double radius;
 	Color color;
+	Color phong;
 
 };
 

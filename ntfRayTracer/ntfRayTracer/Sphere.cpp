@@ -12,14 +12,16 @@ Sphere::Sphere()
 	center = Vctr();
 	radius = 1.0;
 	color = Color();
+	phong = Color();
 
 }
-Sphere::Sphere(Vctr center, double radius, Color color)
+Sphere::Sphere(Vctr center, double radius, Color color, Color phong)
 {
 
 	this->center = center;
 	this->radius = radius;
 	this->color = color;
+	this->phong = phong;
 
 }
 
@@ -105,5 +107,12 @@ double Sphere::detectIntersection(Ray curRay) const
 		return -1;
 
 	}
+
+}
+
+Color Sphere::getPhong() const
+{
+
+	return phong;
 
 }

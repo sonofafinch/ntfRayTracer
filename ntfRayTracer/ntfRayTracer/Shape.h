@@ -26,6 +26,8 @@ public:
 
 	virtual Color getColor() const { return Color(); }
 
+	virtual Color getPhong() const { return Color(); }
+
 	/**
 	*	detectIntersection
 	*
